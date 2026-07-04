@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: product-service
+
+  profiles:
+    active: dev
+
+  flyway:
+    enabled: true
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+
+server:
+  port: 8081
+
+company:
+  name: Alpha Ecommerce
+  email: support@alpha.com
+  phone: 9999999999
