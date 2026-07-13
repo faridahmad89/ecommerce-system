@@ -10,12 +10,12 @@ spring:
       routes:
 
         - id: product-service
-          uri: http://localhost:8081
+          uri: lb://product-service
           predicates:
             - Path=/api/v1/products/**
 
         - id: order-service
-          uri: http://localhost:8082
+          uri: lb://order-service
           predicates:
             - Path=/api/v1/orders/**
 
