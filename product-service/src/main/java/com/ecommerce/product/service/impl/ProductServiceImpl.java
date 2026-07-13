@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +33,7 @@ public class ProductServiceImpl implements ProductService {
         this.productMapper = productMapper;
     }
 
+    @Transactional
     @Override
     public ProductResponse createProduct(CreateProductRequest request) {
 
@@ -42,6 +44,7 @@ public class ProductServiceImpl implements ProductService {
         return productMapper.toResponse(savedProduct);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public ProductResponse getProductById(Long id) {
         Product product = productRepository.findById(id)
@@ -63,6 +66,7 @@ public class ProductServiceImpl implements ProductService {
 
     }
 
+    @Transactional(readOnly = true)
     @Override
     public PagedResponse<ProductResponse> getAllProducts(Pageable pageable) {
 
@@ -82,6 +86,8 @@ public class ProductServiceImpl implements ProductService {
                 .build();
 
     }
+
+    @Transactional
     @Override
     public ProductResponse updateProduct(
             Long id,
@@ -104,6 +110,7 @@ public class ProductServiceImpl implements ProductService {
         return productMapper.toResponse(updated);
     }
 
+    @Transactional
     @Override
     public void deleteProduct(Long id) {
 
