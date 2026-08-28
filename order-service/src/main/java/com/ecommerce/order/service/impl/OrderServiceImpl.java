@@ -1,17 +1,15 @@
 package com.ecommerce.order.service.impl;
 
-import com.ecommerce.order.client.ProductFeignClient;
-import com.ecommerce.order.client.dto.ProductDto;
+import com.ecommerce.order.kafka.OrderEventProducer;
 import com.ecommerce.order.dto.request.CreateOrderRequest;
 import com.ecommerce.order.dto.response.OrderResponse;
 import com.ecommerce.order.entity.Order;
 import com.ecommerce.order.enums.OrderStatus;
-import com.ecommerce.order.exception.ServiceUnavailableException;
+import com.ecommerce.order.event.OrderCreatedEvent;
 import com.ecommerce.order.gateway.ProductGateway;
 import com.ecommerce.order.mapper.OrderMapper;
 import com.ecommerce.order.repository.OrderRepository;
 import com.ecommerce.order.service.OrderService;
-import feign.FeignException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +27,7 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderMapper orderMapper;
     private final ProductGateway productGateway;
+    private final OrderEventProducer orderEventProducer;
 
     @Override
     @Transactional
@@ -49,6 +48,16 @@ public class OrderServiceImpl implements OrderService {
                 .build();
 
         Order savedOrder = orderRepository.save(order);
+
+        OrderCreatedEvent event = new OrderCreatedEvent(
+                savedOrder.getId(),
+                savedOrder.getProductId(),
+                savedOrder.getQuantity(),
+                savedOrder.getProductPrice(),
+                savedOrder.getTotalPrice()
+        );
+
+        orderEventProducer.publishOrderCreated(event);
 
         return orderMapper.toResponse(savedOrder);
     }
