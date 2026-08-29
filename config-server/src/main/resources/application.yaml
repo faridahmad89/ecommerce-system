@@ -9,4 +9,6 @@ spring:
     config:
       server:
         git:
-          uri: file:///C:/Projects/spring/ecommerce-system/config-repo
+          uri: https://github.com/faridahmad89/ecommerce-system.git
+          search-paths: config-repo
+          default-label: main
