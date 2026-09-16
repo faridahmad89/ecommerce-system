@@ -1,4 +1,4 @@
-package com.ecommerce.inventory.kafka;
+package com.ecommerce.order.kafka;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -10,23 +10,17 @@ public class InventoryEventProducer {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
-    public void publishInventoryRejected(
-            InventoryRejectedEvent event) {
+    public void publishReleaseInventory(
+            ReleaseInventoryEvent event) {
 
         kafkaTemplate.send(
-                "inventory-events",
+                "release-inventory-events",
                 event.orderId().toString(),
                 event
         );
-    }
 
-    public void publishInventoryReserved(
-            InventoryReservedEvent event) {
-
-        kafkaTemplate.send(
-                "inventory-reserved-events",
-                event.orderId().toString(),
-                event
+        System.out.println(
+                "Published ReleaseInventoryEvent: " + event
         );
     }
 }
