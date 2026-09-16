@@ -1,34 +1,36 @@
 spring:
   application:
     name: order-service
+
   datasource:
     url: jdbc:postgresql://localhost:5432/orderdb
     username: postgres
     password: postgres
+
   kafka:
     bootstrap-servers: localhost:9092
+
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
     consumer:
       group-id: order-service
+      auto-offset-reset: earliest
 
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
 
       properties:
-        spring.json.trusted.packages: com.ecommerce.order.kafka
+        spring.json.trusted.packages: >
+          com.ecommerce.order.kafka,
+          com.ecommerce.payment.kafka
+
         spring.json.type.mapping: >
           reserved:com.ecommerce.order.kafka.InventoryReservedEvent,
-          rejected:com.ecommerce.order.kafka.InventoryRejectedEvent
-
-eureka:
-  instance:
-    hostname: localhost
-    prefer-ip-address: false
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
+          rejected:com.ecommerce.order.kafka.InventoryRejectedEvent,
+          com.ecommerce.payment.kafka.PaymentSuccessEvent:com.ecommerce.order.kafka.PaymentSuccessEvent,
+          com.ecommerce.payment.kafka.PaymentFailedEvent:com.ecommerce.order.kafka.PaymentFailedEvent
 
   jpa:
     hibernate:
@@ -36,6 +38,15 @@ eureka:
 
   flyway:
     enabled: true
+
+eureka:
+  instance:
+    hostname: localhost
+    prefer-ip-address: false
+
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
 
 server:
   port: 8082

@@ -105,4 +105,34 @@ public class InventoryEventConsumer {
                         + inventory.getQuantity()
         );
     }
+
+    @KafkaListener(
+            topics = "release-inventory-events",
+            groupId = "inventory-service"
+    )
+    @Transactional
+    public void releaseInventory(ReleaseInventoryEvent event) {
+
+        System.out.println(
+                "Received ReleaseInventoryEvent: " + event
+        );
+
+        Inventory inventory = inventoryRepository
+                .findByProductId(event.productId())
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Inventory not found for product: "
+                                        + event.productId()
+                        ));
+
+        inventory.setQuantity(
+                inventory.getQuantity() + event.quantity()
+        );
+
+        inventoryRepository.save(inventory);
+
+        System.out.println(
+                "Inventory released for order: " + event.orderId()
+        );
+    }
 }

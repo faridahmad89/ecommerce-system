@@ -23,8 +23,10 @@ spring:
 
       properties:
         spring.json.trusted.packages: "*"
-        spring.json.use.type.headers: false
-        spring.json.value.default.type: com.ecommerce.inventory.kafka.OrderEvent
+        spring.json.use.type.headers: true
+        spring.json.type.mapping: >
+          com.ecommerce.order.event.OrderCreatedEvent:com.ecommerce.inventory.kafka.OrderEvent,
+          com.ecommerce.order.kafka.ReleaseInventoryEvent:com.ecommerce.inventory.kafka.ReleaseInventoryEvent
 
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
@@ -39,6 +41,10 @@ server:
   port: 8083
 
 eureka:
+  instance:
+    hostname: localhost
+    prefer-ip-address: false
+
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka/

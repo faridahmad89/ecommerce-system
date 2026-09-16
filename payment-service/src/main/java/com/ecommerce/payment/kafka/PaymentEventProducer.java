@@ -1,4 +1,4 @@
-package com.ecommerce.inventory.kafka;
+package com.ecommerce.payment.kafka;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -6,25 +6,23 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class InventoryEventProducer {
+public class PaymentEventProducer {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
-    public void publishInventoryRejected(
-            InventoryRejectedEvent event) {
+    public void publishPaymentSuccess(PaymentSuccessEvent event) {
 
         kafkaTemplate.send(
-                "inventory-events",
+                "payment-events",
                 event.orderId().toString(),
                 event
         );
     }
 
-    public void publishInventoryReserved(
-            InventoryReservedEvent event) {
+    public void publishPaymentFailed(PaymentFailedEvent event) {
 
         kafkaTemplate.send(
-                "inventory-reserved-events",
+                "payment-events",
                 event.orderId().toString(),
                 event
         );
